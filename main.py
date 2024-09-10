@@ -5,10 +5,18 @@ from circleshape import *
 
 def main():
     pygame.init()
+    
     black_bg = (0, 0, 0)
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+
+    Player.containers = (updatable, drawable)
+
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    
     dt = 0
     
     while True:
@@ -17,7 +25,13 @@ def main():
                 return
         
         screen.fill(black_bg)
-        player.draw(screen)
+
+        for i in updatable:
+            i.update(dt)
+        
+        for i in drawable:
+            i.draw(screen)
+        
         pygame.display.flip()
         
         dt = clock.tick(60) / 1000
