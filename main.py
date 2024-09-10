@@ -47,6 +47,13 @@ def main():
             if player.collides_with(a) == True:
                 print("Game over!")
                 sys.exit()
+            for shot in player_shots:
+                if shot.collides_with(a):
+                    a.split()
+                    shot.kill()
+                
+
+        
 
         for i in drawable:
             i.draw(screen)
