@@ -6,13 +6,15 @@ from player import Player
 from shot import Shot
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from scoretracker import ScoreTracker
 
 def main():
     pygame.init()
     
-    black_bg = (0, 0, 0)
     timer = 0
+    dt = 0
     clock = pygame.time.Clock()
+    score_tracker = ScoreTracker()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     
     updatable = pygame.sprite.Group()
@@ -29,19 +31,21 @@ def main():
 
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     
-    dt = 0
-    
+    score_threshold = 1
+    speed_multiplier = 1.0
+    speed_increase_factor = 0.05
+  
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
         
-        screen.fill(black_bg)
+        timer -= dt
+        
+        screen.fill(BLACK)
 
         for i in updatable:
             i.update(dt)
-
-            timer -= dt
 
         for a in asteroids:
             if player.collides_with(a) == True:
@@ -51,10 +55,15 @@ def main():
                 if shot.collides_with(a):
                     a.split()
                     shot.kill()
-                
+                    score_tracker.score_add()
 
+                    if score_tracker.score % score_threshold == 0:
+                        speed_multiplier += speed_increase_factor
+                        for a in asteroids:
+                            a.increase_speed(speed_multiplier)
         
-
+        score_tracker.draw(screen)
+                
         for i in drawable:
             i.draw(screen)
         
